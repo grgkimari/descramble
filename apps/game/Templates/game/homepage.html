@@ -1,5 +1,16 @@
 {% extends 'game/base.html' %}
 {% block title %} Guest {% endblock %}
 {% block content %}
-<h2>This is the homepage</h2>
+<nav>
+    <div><a href="{% url 'register' %}">Sign up</a></div>
+    <div><a href="{% url 'login' %}">Log in</a></div>
+</nav>
+<div class="">
+    <!-- <h3>{{scrambled_word}}</h3> -->
+</div>
+<div>
+    <form>
+        <input type="text" maxlength="">
+    </form>
+</div>
 {% endblock %}
