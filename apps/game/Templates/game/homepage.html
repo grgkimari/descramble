@@ -1,9 +1,20 @@
 {% extends 'game/base.html' %}
-{% block title %} Guest {% endblock %}
+{% block title %}
+{% if request.user.is_authenticated %}
+    {{user.username}}
+{% else %}
+Guest
+{% endif %}
+{% endblock %}
 {% block content %}
 <nav>
-    <div><a href="{% url 'register' %}">Sign up</a></div>
-    <div><a href="{% url 'login' %}">Log in</a></div>
+    {% if not request.user.is_authenticated %}
+        <div><a href="{% url 'register' %}">Sign up</a></div>
+        <div><a href="{% url 'login' %}">Log in</a></div>
+    {% else %}
+    {{user.username}}
+    <a href="{% url 'logout' %}">Log out</a>
+    {% endif %}
 </nav>
 <div class="">
     <!-- <h3>{{scrambled_word}}</h3> -->

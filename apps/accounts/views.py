@@ -1,20 +1,27 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .forms import SignupForm,LoginForm
+from django.contrib.auth import authenticate,login,logout
 
 def register_view(request):
-    form = SignupForm(request.POST)
-    msg = None
-    if request.method == 'POST':
-        if form.is_valid():
-            user = form.save()
-            msg = 'You have successfully registered.'
-    
-    return render(request,'accounts/register.html',{'form' : form, 'msg' : msg})
-
-def login_view(request):
-	form = LoginForm(request.POST)
+	form = SignupForm()
 	msg = None
 	if request.method == 'POST':
+		msg = 'Post request received'
+		form = SignupForm(request.POST)
+		if form.is_valid():
+			user = form.save()
+			msg = 'You have successfully registered.'
+			return redirect('homePage')
+		else:
+			msg = 'Error creating user'
+    
+	return render(request,'accounts/register.html',{'form' : form, 'msg' : msg})
+
+def login_view(request):
+	form = LoginForm()
+	msg = None
+	if request.method == 'POST':
+		form = LoginForm(request.POST)
 		if form.is_valid():
 			username = form.cleaned_data.get('username')
 			password = form.cleaned_data.get('password')
@@ -23,10 +30,14 @@ def login_view(request):
 				login(request, user)
 				return redirect('homePage')
 			else:
-				msg = "Invalid Credentials"
+				msg = "Invalid Credentials."
 
 		else:
-			msg = "Error validating form"
+			msg = "Error validating form."
 	else:
 		msg = "Form not submitted"
 	return render(request,'accounts/login.html',{'form' : form, 'msg' : msg} )
+
+def logout_view(request):
+	logout(request)
+	return redirect('homePage')

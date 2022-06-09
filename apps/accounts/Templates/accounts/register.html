@@ -1,5 +1,10 @@
 {% extends 'game/base.html' %}
 {% block title %} Sign up {% endblock %}
 {% block content %}
-{{form.as_p}}
+<form action="" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Submit</button>
+</form>
+{{msg}}
 {% endblock %}
