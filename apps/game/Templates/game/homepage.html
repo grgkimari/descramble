@@ -17,11 +17,18 @@ Guest
     {% endif %}
 </nav>
 <div class="">
-    <!-- <h3>{{scrambled_word}}</h3> -->
 </div>
 <div>
-    <form>
-        <input type="text" maxlength="">
+    <form method="post" action="">
+        {% csrf_token %}
+        <h1>{{scrambled_word}} | {{id}}</h1>
+        {{form.as_p}}
+        <button type="submit" class="">Submit</button>
     </form>
+    {% if messages %}
+    {% for message in messages %}
+        {{message}}<br>
+    {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
