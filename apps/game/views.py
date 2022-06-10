@@ -48,8 +48,7 @@ def getId():
         id = int(f.readline())
         return id
 
-
-def homePage(request):
+def resultPage(request):
     attemptText = None
     word,scrambled_word,data= getWord()
     storeWord(word,getId())
@@ -70,4 +69,30 @@ def homePage(request):
             else:
                 messages.error(request,"Wrong! The word was " + getStoredWord(getId()) + str(getId()))
             incrementId()
+        return redirect('homePage')
+    return render(request,'game/homepage.html',{'form' : form, 'data' : data, 'scrambled_word' : scrambled_word, 'id' : getId()})
+
+
+def homePage(request):
+    attemptText = None
+    word,scrambled_word,data= getWord()
+    storeWord(word,getId()-1)
+    messages.success(request,"After function call word = "+ word)
+    form = AttemptForm()
+    messages.success(request,"After form render word = " + word)
+    if request.method == 'POST':
+        messages.success(request,"Before form post word = " + word)
+        form = AttemptForm(request.POST)
+        messages.success(request,"After form post word = " + word)
+        if form.is_valid():        
+            attemptText = form.cleaned_data.get('attemptText').strip()
+            
+            if attemptText == word:
+                messages.success(request, "Correct!")
+            elif len(attemptText) == len(word) and attemptText in data:
+                messages.success(request,"Not the word we were looking for! The word was " + getStoredWord(getId()))
+            else:
+                messages.error(request,"Wrong! The word was " + getStoredWord(getId()) + str(getId()))
+            incrementId()
+        return resultPage(request)
     return render(request,'game/homepage.html',{'form' : form, 'data' : data, 'scrambled_word' : scrambled_word, 'id' : getId()})
