@@ -19,12 +19,24 @@ Guest
 <div class="">
 </div>
 <div>
-    <form method="post" action="">
+    <p>Message : {{message}}</p>
+    <h1>{{word}}</h1>
+    <form method="POST" action="">
         {% csrf_token %}
-        <h1>{{scrambled_word}} | {{id}}</h1>
+        <h1>{{scrambled_word}}</h1>
         {{form.as_p}}
-        <button type="submit" class="">Submit</button>
+        <button type="submit">Submit</button>
+        <p>Form errors</p>
+        {% for field in form %}
+            {% for error in field.errors %}
+            <strong>{{ error | escape }}</strong><br>
+            {% endfor %}
+        {% endfor %}
     </form>
+    <p>Errors : </p>
+    {% for error in form.non_field_errors %}
+        <strong>{{ error | escape }}</strong><br>
+    {% endfor %}
     {% if messages %}
     {% for message in messages %}
         {{message}}<br>

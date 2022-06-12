@@ -1,10 +1,15 @@
+from email import message
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from .forms import AttemptForm
+from .models import Attempt
 import json
 import random
-import csv
-from pconst import const
+import logging
+
+logging.basicConfig(filename='descramble_game.log', format='%(Pastime)s %(msg)s', filemode='w')
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 def getWord():
     with open('F:/Projects/Dev/django_projects/descramble_venv/descramble_project/apps/game/words.json') as allWordFile:
@@ -22,77 +27,42 @@ def getWord():
             scrambled_word = scrambled_word + wordList[index]
             wordList.remove(wordList[index])
         return (word,scrambled_word,data)
-def storeWord(word,id):
-    row = (word,id)
-    with open('wordsSent.csv','w') as f:
-        csv_writer = csv.writer(f)
-        csv_writer.writerow(row)
-
-def getStoredWord(id):
-    with open('wordsSent.csv','r') as f:
-        csv_reader = csv.reader(f)
-        for line in csv_reader:
-            if int(line[1]) == id:
-                return line[0]
-
-def incrementId():
-    with open('id.txt','r+') as f:
-        id = int(f.readline())
-        id = id+1
-        f.seek(0)
-        f.truncate()
-        f.write(str(id))
-
-def getId():
-    with open('id.txt','r') as f:
-        id = int(f.readline())
-        return id
-
-def resultPage(request):
-    attemptText = None
-    word,scrambled_word,data= getWord()
-    storeWord(word,getId())
-    messages.success(request,"After function call word = "+ word)
-    form = AttemptForm()
-    messages.success(request,"After form render word = " + word)
-    if request.method == 'POST':
-        messages.success(request,"Before form post word = " + word)
-        form = AttemptForm(request.POST)
-        messages.success(request,"After form post word = " + word)
-        if form.is_valid():        
-            attemptText = form.cleaned_data.get('attemptText').strip()
-            
-            if attemptText == word:
-                messages.success(request, "Correct!")
-            elif len(attemptText) == len(word) and attemptText in data:
-                messages.success(request,"Not the word we were looking for! The word was " + getStoredWord(getId()))
-            else:
-                messages.error(request,"Wrong! The word was " + getStoredWord(getId()) + str(getId()))
-            incrementId()
-        return redirect('homePage')
-    return render(request,'game/homepage.html',{'form' : form, 'data' : data, 'scrambled_word' : scrambled_word, 'id' : getId()})
 
 
 def homePage(request):
-    attemptText = None
-    word,scrambled_word,data= getWord()
-    storeWord(word,getId()-1)
-    messages.success(request,"After function call word = "+ word)
-    form = AttemptForm()
-    messages.success(request,"After form render word = " + word)
+    
+
+    response = None
+    message = None
+    id = None
     if request.method == 'POST':
-        messages.success(request,"Before form post word = " + word)
         form = AttemptForm(request.POST)
-        messages.success(request,"After form post word = " + word)
-        if form.is_valid():        
-            attemptText = form.cleaned_data.get('attemptText').strip()
-            
-            if attemptText == word:
-                messages.success(request, "Correct!")
-            elif len(attemptText) == len(word) and attemptText in data:
-                messages.success(request,"Not the word we were looking for! The word was " + getStoredWord(getId()))
+        word,scrambled_word,data = getWord()
+        if 'message' in request.COOKIES:
+            message = request.COOKIES['message']
+        if 'id' in request.COOKIES:
+            id = request.COOKIES['id']
+        if form.is_valid():
+            attempt = Attempt.objects.create(word = word)
+            attempt.attemptText = form.cleaned_data.get('attemptText')
+            attempt.save()
+            response = render(request, 'game/homepage.html',{'word' : attempt.word, 'scrambled_word' : scrambled_word, 'form' : form, 'message' : message})
+            if attempt.word.strip() == attempt.attemptText.strip():
+                response.set_cookie('message', 'Correct!')
+                response.set_cookie('id', str(attempt.id))
+                
             else:
-                messages.error(request,"Wrong! The word was " + getStoredWord(getId()) + str(getId()))
-            incrementId()
-        return resultPage(request)
-    return render(request,'game/homepage.html',{'form' : form, 'data' : data, 'scrambled_word' : scrambled_word, 'id' : getId()})
+                response.set_cookie('message', 'Wrong! The correct word was ' + attempt.word + ' Your attempt was ' + attempt.attemptText)
+                response.set_cookie('id', str(attempt.id))
+            attempt.isChecked = False
+            return response
+        else:
+            message = 'Form is not valid'
+            response = render(request, 'game/homepage.html',{'word' : attempt.word, 'scrambled_word' : scrambled_word, 'form' : form, 'message' : message})
+            return response
+    else:
+        form = AttemptForm()
+        word,scrambled_word,data = getWord()
+        response = render(request, 'game/homepage.html',{'word' : word, 'scrambled_word' : scrambled_word, 'form' : form, 'message' : message })
+        logger.debug(str(response))
+        return response

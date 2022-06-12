@@ -1,4 +1,10 @@
-from django import forms
+from dataclasses import fields
+from pyexpat import model
+from django.forms import ModelForm
+from .models import Attempt
 
-class AttemptForm(forms.Form):
-    attemptText = forms.CharField(max_length = 100, widget = forms.TextInput())
+class AttemptForm(ModelForm):
+    class Meta:
+        model = Attempt
+        fields = ['attemptText']
+    
