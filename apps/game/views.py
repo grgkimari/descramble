@@ -30,39 +30,50 @@ def getWord():
 
 
 def homePage(request):
-    
-
-    response = None
     message = None
     id = None
+    form = AttemptForm()
+
     if request.method == 'POST':
-        form = AttemptForm(request.POST)
         word,scrambled_word,data = getWord()
-        if 'message' in request.COOKIES:
-            message = request.COOKIES['message']
-        if 'id' in request.COOKIES:
-            id = request.COOKIES['id']
-        if form.is_valid():
-            attempt = Attempt.objects.create(word = word)
-            attempt.attemptText = form.cleaned_data.get('attemptText')
-            attempt.save()
-            response = render(request, 'game/homepage.html',{'word' : attempt.word, 'scrambled_word' : scrambled_word, 'form' : form, 'message' : message})
-            if attempt.word.strip() == attempt.attemptText.strip():
-                response.set_cookie('message', 'Correct!')
-                response.set_cookie('id', str(attempt.id))
-                
-            else:
-                response.set_cookie('message', 'Wrong! The correct word was ' + attempt.word + ' Your attempt was ' + attempt.attemptText)
-                response.set_cookie('id', str(attempt.id))
-            attempt.isChecked = False
-            return response
-        else:
-            message = 'Form is not valid'
-            response = render(request, 'game/homepage.html',{'word' : attempt.word, 'scrambled_word' : scrambled_word, 'form' : form, 'message' : message})
-            return response
-    else:
+        form1 = AttemptForm(request.POST)
         form = AttemptForm()
+        attempt = Attempt.objects.create(word = word,attemptText = '--NONE--')
+        attempt.save()
+        
+
+
+        id = request.COOKIES['id']
+        previous_attempt = Attempt.objects.get(id = id)
+        if form1.is_valid():
+            previous_attempt.attemptText = form1.cleaned_data.get('attemptText')
+            previous_attempt.save()
+            if previous_attempt.word == previous_attempt.attemptText:
+                message = "Correct !"
+            else:
+                message = "Not Correct! The word was " + previous_attempt.word + ". Your attempt was " + previous_attempt.attemptText
+        else:
+            message = 'form is invalid'
+
+        response = render(request, 'game/homepage.html', {'form' : form, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
+
+        if 'message' in request.COOKIES:
+            response.delete_cookie('message')
+        if 'id' in request.COOKIES:
+            response.cookies['id'] = attempt.id
+        else:
+            response.set_cookie('id', attempt.id)
+        return response
+    else:
         word,scrambled_word,data = getWord()
-        response = render(request, 'game/homepage.html',{'word' : word, 'scrambled_word' : scrambled_word, 'form' : form, 'message' : message })
-        logger.debug(str(response))
+        form = AttemptForm()
+        attempt = Attempt.objects.create(word = word,attemptText = '--NONE--')
+        attempt.save()
+        response = render(request, 'game/homepage.html', {'form' : form, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
+        if 'message' in request.COOKIES:
+            response.delete_cookie('message')
+        if 'id' in request.COOKIES:
+            response.cookies['id'] = attempt.id
+        else:
+            response.set_cookie('id', attempt.id)
         return response

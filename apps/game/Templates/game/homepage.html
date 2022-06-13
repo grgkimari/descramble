@@ -19,7 +19,9 @@ Guest
 <div class="">
 </div>
 <div>
-    <p>Message : {{message}}</p>
+    {% if message %}
+        <p>Message : {{message}}</p>
+    {% endif %}
     <h1>{{word}}</h1>
     <form method="POST" action="">
         {% csrf_token %}

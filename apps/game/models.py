@@ -11,4 +11,4 @@ class Attempt(models.Model):
         ordering = ['-time_created']
 
     def __str__(self):
-        return self.attemptText + ' ' + str(self.time_created)
+        return str(self.id)+ ' ' + self.word + ' ' + str(self.time_created)
