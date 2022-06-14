@@ -11,15 +11,15 @@ logging.basicConfig(filename='descramble_game.log', format='%(Pastime)s %(msg)s'
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-def getWord():
+def getWord(level):
     with open('F:/Projects/Dev/django_projects/descramble_venv/descramble_project/apps/game/words.json') as allWordFile:
         data = json.load(allWordFile)
         allWordFile.close()
         searchValue = random.randint(0,len(data) - 1)
-        
-        for item in data.items():
-            if item[1] == searchValue:
-                word = item[0]
+        while True:  
+            for item in data.items():
+                if item[1] == searchValue:
+                    word = item[0]
         wordList = [letter for letter in word]
         scrambled_word = ''
         for i in range(len(word)):
@@ -52,6 +52,7 @@ def homePage(request):
                 message = "Correct !"
             else:
                 message = "Not Correct! The word was " + previous_attempt.word + ". Your attempt was " + previous_attempt.attemptText
+            previous_attempt.delete()
         else:
             message = 'form is invalid'
 

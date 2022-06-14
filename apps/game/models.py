@@ -5,7 +5,6 @@ class Attempt(models.Model):
     word = models.CharField(max_length=100)
     attemptText = models.CharField(max_length=100)
     time_created = models.DateTimeField(auto_now_add=True)
-    isChecked = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-time_created']
