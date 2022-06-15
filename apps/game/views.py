@@ -11,7 +11,7 @@ logging.basicConfig(filename='descramble_game.log', format='%(Pastime)s %(msg)s'
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-def getWord(level):
+def getWord():
     with open('F:/Projects/Dev/django_projects/descramble_venv/descramble_project/apps/game/words.json') as allWordFile:
         data = json.load(allWordFile)
         allWordFile.close()
@@ -41,8 +41,6 @@ def homePage(request):
         attempt = Attempt.objects.create(word = word,attemptText = '--NONE--')
         attempt.save()
         
-
-
         id = request.COOKIES['id']
         previous_attempt = Attempt.objects.get(id = id)
         if form1.is_valid():
