@@ -11,15 +11,43 @@ logging.basicConfig(filename='descramble_game.log', format='%(Pastime)s %(msg)s'
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-def getWord():
-    with open('F:/Projects/Dev/django_projects/descramble_venv/descramble_project/apps/game/words.json') as allWordFile:
+def getWord(level):
+    word = None
+    with open('words.json') as allWordFile:
+        minWordLength = maxWordLength = 0
+        if level == "Very Easy":
+            minWordLength = 3
+            maxWordLength = 4
+        elif level == "Easy":
+            minWordLength = 4
+            maxWordLength = 5
+        elif level == "Medium":
+            minWordLength = 5
+            maxWordLength = 6
+        elif level == "Hard":
+            minWordLength = 7
+            maxWordLength = 12
+        elif level == "Very Hard":
+            minWordLength = 12
+            maxWordLength = 16
+        elif level == "Legendary":
+            minWordLength = 20
+            maxWordLength = 50
+            
         data = json.load(allWordFile)
         allWordFile.close()
-        searchValue = random.randint(0,len(data) - 1)
-        while True:  
+        cont = True
+
+        while cont: 
+            searchValue = random.randint(0,len(data) - 1)
             for item in data.items():
                 if item[1] == searchValue:
                     word = item[0]
+                    if len(word) >= minWordLength and len(word) <= maxWordLength:
+                        cont = False
+                        break
+                    
+                
         wordList = [letter for letter in word]
         scrambled_word = ''
         for i in range(len(word)):
@@ -30,49 +58,43 @@ def getWord():
 
 
 def homePage(request):
-    message = None
-    id = None
-    form = AttemptForm()
-
     if request.method == 'POST':
-        word,scrambled_word,data = getWord()
-        form1 = AttemptForm(request.POST)
-        form = AttemptForm()
-        attempt = Attempt.objects.create(word = word,attemptText = '--NONE--')
-        attempt.save()
-        
-        id = request.COOKIES['id']
-        previous_attempt = Attempt.objects.get(id = id)
-        if form1.is_valid():
-            previous_attempt.attemptText = form1.cleaned_data.get('attemptText')
+        message = None
+        form = AttemptForm(request.POST)
+        if form.is_valid():
+            
+            previous_attempt = Attempt.objects.all()[0]
+            previous_attempt.attemptText = form.cleaned_data.get('attemptText')
             previous_attempt.save()
-            if previous_attempt.word == previous_attempt.attemptText:
-                message = "Correct !"
+            if previous_attempt.attemptText == previous_attempt.word:
+                message = "Correct!"
             else:
-                message = "Not Correct! The word was " + previous_attempt.word + ". Your attempt was " + previous_attempt.attemptText
-            previous_attempt.delete()
-        else:
-            message = 'form is invalid'
+                message = "Incorrect. Your attempt was " + previous_attempt.attemptText + ". The correct word is " + previous_attempt.word
+            
+            Attempt.objects.all().delete()
 
-        response = render(request, 'game/homepage.html', {'form' : form, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
-
-        if 'message' in request.COOKIES:
-            response.delete_cookie('message')
-        if 'id' in request.COOKIES:
-            response.cookies['id'] = attempt.id
         else:
-            response.set_cookie('id', attempt.id)
-        return response
-    else:
-        word,scrambled_word,data = getWord()
-        form = AttemptForm()
-        attempt = Attempt.objects.create(word = word,attemptText = '--NONE--')
+            message = "Form is not valid"
+
+        if request.user.is_authenticated:
+            word, scrambled_word, data = getWord(request.user.level)
+        else:
+             word, scrambled_word, data = getWord("Very Easy")
+        
+        attempt = Attempt.objects.create(word=word, attemptText = "--NONE--")
         attempt.save()
-        response = render(request, 'game/homepage.html', {'form' : form, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
-        if 'message' in request.COOKIES:
-            response.delete_cookie('message')
-        if 'id' in request.COOKIES:
-            response.cookies['id'] = attempt.id
+        form1 = AttemptForm()
+
+        return render(request, 'game/homepage.html', {'form' : form1, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
+    else:
+        form = AttemptForm()
+        message = "Welcome to descramble"
+        if request.user.is_authenticated:
+            word, scrambled_word, data = getWord(request.user.level)
+            attempt = Attempt.objects.create(word=word, attemptText = "--NONE--")
+            attempt.save()
         else:
-            response.set_cookie('id', attempt.id)
-        return response
+            word, scrambled_word, data = getWord("Very Easy")
+            attempt = Attempt.objects.create(word=word, attemptText = "--NONE--")
+            attempt.save()
+        return render(request, 'game/homepage.html', {'form' : form, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})

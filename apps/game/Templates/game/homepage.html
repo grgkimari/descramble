@@ -12,7 +12,8 @@ Guest
         <div><a href="{% url 'register' %}">Sign up</a></div>
         <div><a href="{% url 'login' %}">Log in</a></div>
     {% else %}
-    {{user.username}}
+    {{user.email}}
+    Level : {{user.level}}
     <a href="{% url 'logout' %}">Log out</a>
     {% endif %}
 </nav>
