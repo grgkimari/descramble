@@ -56,7 +56,6 @@ def getWord(level):
             wordList.remove(wordList[index])
         return (word,scrambled_word,data)
 
-
 def homePage(request):
     if request.method == 'POST':
         message = None

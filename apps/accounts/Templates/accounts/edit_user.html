@@ -1,0 +1,14 @@
+{% extends 'game/base.html' %}
+{% block title %} Edit User {% endblock %}
+{% block content %}
+<form action="", method="POST">
+    <label for="email"  >Email</label>
+    <input readonly="True" value="{{request.user.email}}" type="email">
+    <input type="radio" name="level" value="Very Easy">Very Easy</input>
+    <input type="radio" name="level" value="Easy">Easy</input>
+    <input type="radio" name="level" value="Medium">Medium</input>
+    <input type="radio" name="level" value="Hard">Hard</input>
+    <input type="radio" name="level" value="Very Hard">Very Hard</input>
+    <input type="radio" name="level" value="Legendary">Legendary</input>
+</form>
+{% endblock %}
