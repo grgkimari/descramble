@@ -14,11 +14,12 @@ Guest
     {% else %}
     {{user.email}}
     Level : {{user.level}}
-    <a href="{% url 'edit_user' %}">Edit details</a>
+    <a href="{% url 'edit_user' %}">Account details</a>
     <a href="{% url 'logout' %}">Log out</a>
     {% endif %}
 </nav>
 <div class="">
+    <h1><strong>Score : {{request.user.currentScore}}</strong></h1>
 </div>
 <div>
     {% if message %}

@@ -30,6 +30,7 @@ class CustomUser(AbstractUser):
     username = None
     email = models.EmailField(verbose_name='email address', unique=True,max_length=100)
     level = models.CharField(verbose_name="level", default="Very Easy", max_length=20 )
+    currentScore = models.IntegerField(verbose_name="currentScore", default = 0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -38,3 +39,4 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+

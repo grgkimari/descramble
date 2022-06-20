@@ -1,4 +1,4 @@
-from email import message
+from .models import HighScore
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from .forms import AttemptForm
@@ -67,6 +67,20 @@ def homePage(request):
             previous_attempt.save()
             if previous_attempt.attemptText == previous_attempt.word:
                 message = "Correct!"
+                if request.user.is_authenticated:
+                    request.user.currentScore += 1
+                    request.user.save()
+                    highscores = [highscore for highscore in HighScore.objects.filter(user = request.user).order_by('score')]
+                    if len(highscores) > 0:
+                        if request.user.currentScore > highscores[0].score or len(highscores) < 10:
+                            newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
+                            newHighScore.save()
+                            if len(highscores) == 10:
+                                highscores[0].delete()
+                    else:
+                        newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
+                        newHighScore.save()
+
             else:
                 message = "Incorrect. Your attempt was " + previous_attempt.attemptText + ". The correct word is " + previous_attempt.word
             
@@ -83,8 +97,10 @@ def homePage(request):
         attempt = Attempt.objects.create(word=word, attemptText = "--NONE--")
         attempt.save()
         form1 = AttemptForm()
-
-        return render(request, 'game/homepage.html', {'form' : form1, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
+        highscores = None
+        if request.user.is_authenticated:
+            highscores = [highscore for highscore in HighScore.objects.filter(user = request.user)]
+        return render(request, 'game/homepage.html', {'highscores' : highscores, 'form' : form1, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
     else:
         form = AttemptForm()
         message = "Welcome to descramble"
