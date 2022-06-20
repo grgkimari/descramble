@@ -1,14 +1,17 @@
 {% extends 'game/base.html' %}
 {% block title %} Edit User {% endblock %}
 {% block content %}
-<form action="", method="POST">
+<form action="", method="POST" name="edit_user">
+    {% csrf_token %}
     <label for="email"  >Email</label>
     <input readonly="True" value="{{request.user.email}}" type="email">
-    <input type="radio" name="level" value="Very Easy">Very Easy</input>
-    <input type="radio" name="level" value="Easy">Easy</input>
-    <input type="radio" name="level" value="Medium">Medium</input>
-    <input type="radio" name="level" value="Hard">Hard</input>
-    <input type="radio" name="level" value="Very Hard">Very Hard</input>
-    <input type="radio" name="level" value="Legendary">Legendary</input>
+    <label for="level">Level</label>
+    <input type="radio" name="level" value="Very Easy" {% if request.user.level == 'Very Easy' %} checked = "checked" {% endif %}>Very Easy</input>
+    <input type="radio" name="level" value="Easy" {% if request.user.level == 'Easy' %} checked = "checked" {% endif %} >Easy</input>
+    <input type="radio" name="level" value="Medium" {% if request.user.level == 'Medium' %} checked = "checked" {% endif %}>Medium</input>
+    <input type="radio" name="level" value="Hard" {% if request.user.level == 'Hard' %} checked = "checked" {% endif %}>Hard</input>
+    <input type="radio" name="level" value="Very Hard" {% if request.user.level == 'Very Hard' %} checked = "checked" {% endif %}>Very Hard</input>
+    <input type="radio" name="level" value="Legendary" {% if request.user.level == 'Legendary' %} checked = "checked" {% endif %}>Legendary</input>
+    <input type="submit" name="submit" value="Submit">
 </form>
 {% endblock %}

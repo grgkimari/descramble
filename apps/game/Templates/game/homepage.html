@@ -1,7 +1,7 @@
 {% extends 'game/base.html' %}
 {% block title %}
 {% if request.user.is_authenticated %}
-    {{user.username}}
+    {{user.email}}
 {% else %}
 Guest
 {% endif %}
@@ -14,6 +14,7 @@ Guest
     {% else %}
     {{user.email}}
     Level : {{user.level}}
+    <a href="{% url 'edit_user' %}">Edit details</a>
     <a href="{% url 'logout' %}">Log out</a>
     {% endif %}
 </nav>
