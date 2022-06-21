@@ -1,4 +1,5 @@
-{% extends 'game/base.html' %}
+{% extends 'game/base.html' %} 
+<!-- Extends the base template -->
 {% block title %}
 {% if request.user.is_authenticated %}
     {{user.email}}
@@ -19,7 +20,7 @@ Guest
     {% endif %}
 </nav>
 <div class="">
-    <h1><strong>Score : {{request.user.currentScore}}</strong></h1>
+    <h1><strong>Score :{% if request.user.is_authenticated %} {{request.user.currentScore}} {% else %} {{ score }} {% endif %}</strong></h1>
 </div>
 <div>
     {% if message %}
