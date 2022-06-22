@@ -8,45 +8,58 @@ Guest
 {% endif %}
 {% endblock %}
 {% block content %}
-<nav>
-    {% if not request.user.is_authenticated %}
-        <div><a href="{% url 'register' %}">Sign up</a></div>
-        <div><a href="{% url 'login' %}">Log in</a></div>
-    {% else %}
-    {{user.email}}
-    Level : {{user.level}}
-    <a href="{% url 'edit_user' %}">Account details</a>
-    <a href="{% url 'logout' %}">Log out</a>
-    {% endif %}
-</nav>
-<div class="">
-    <h1><strong>Score :{% if request.user.is_authenticated %} {{request.user.currentScore}} {% else %} {{ score }} {% endif %}</strong></h1>
-</div>
-<div>
-    {% if message %}
-        <p>Message : {{message}}</p>
-    {% endif %}
+<section>
+    <div class="container-lg container-1 align-center text-center bg-dark my-5 rounded text-light text-lg fw-bolder">
+        <h2>Score :{% if request.user.is_authenticated %} {{request.user.currentScore}} {% else %} {{ score }} {% endif %}</h2>
+    </div>
+</section>
+<section>
+    <div>
+        {% if message %}
+            {% if message == 'Correct!' %}
+                <div class="container-lg align-center alert alert-success ">
+                    Message : {{message}}
+                </div>
+            {% else %}
+                <div class="container-lg align-center alert alert-danger ">
+                    Message : {{message}}
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</section>
+<section>
     <h1>{{word}}</h1>
-    <form method="POST" action="">
-        {% csrf_token %}
-        <h1>{{scrambled_word}}</h1>
-        {{form.as_p}}
-        <button type="submit">Submit</button>
-        <p>Form errors</p>
-        {% for field in form %}
-            {% for error in field.errors %}
-            <strong>{{ error | escape }}</strong><br>
+</section>
+
+<section>
+    <div>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <h1>{{scrambled_word}}</h1>
+            {{form.as_p}}
+            <button type="submit">Submit</button>
+            <p>Form errors</p>
+            {% for field in form %}
+                {% for error in field.errors %}
+                <strong>{{ error | escape }}</strong><br>
+                {% endfor %}
             {% endfor %}
+        </form>
+    </div>
+</section>
+
+<section name = "errors">
+    <div>
+        <p>Errors : </p>
+        {% for error in form.non_field_errors %}
+            <strong>{{ error | escape }}</strong><br>
         {% endfor %}
-    </form>
-    <p>Errors : </p>
-    {% for error in form.non_field_errors %}
-        <strong>{{ error | escape }}</strong><br>
-    {% endfor %}
-    {% if messages %}
-    {% for message in messages %}
-        {{message}}<br>
-    {% endfor %}
-    {% endif %}
-</div>
+        {% if messages %}
+        {% for message in messages %}
+            {{message}}<br>
+        {% endfor %}
+        {% endif %}
+    </div>
+</section>
 {% endblock %}

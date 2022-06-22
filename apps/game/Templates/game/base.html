@@ -1,3 +1,4 @@
+<!-- html boilerplate -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,10 +6,60 @@
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{% block title %} {% endblock %}| Descramble</title>
-    <link rel="stylesheet" href="">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 <body>
-    <h1>Welcome to descramble</h1>
-    {% block content %} {% endblock %}
+<!-- navigation bar to appear on all pages -->
+
+<nav class="navbar bg-light shadow-lg container navbar-expand-lg">
+    <!-- logo -->
+    <div class="container-xl p-2">
+
+        <a href="{% url 'homePage' %}" class="navbar-brand">
+            <span class="fw-bolder text-secondary">Descramble</span>
+        </a>
+
+        <!-- toggle button for smaller screens -->
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+    <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
+        {% if request.user.is_authenticated %}
+            <ul class="navbar-nav">
+                <li class="mx-5">
+                    Logged in as : {{user.email}}
+                </li>
+                <li class="mx-5">
+                    Level : {{user.level}}
+                </li>
+                <li class="mx-5 ">
+                    <a href="{% url 'edit_user' %}" class="btn btn-outline-dark">Account details</a>
+                </li>
+                <li class="mx-5">
+                    <a href="{% url 'logout' %}" class="btn btn-outline-dark">Log out</a>
+                </li>
+            </ul>
+        {% else %}
+            <ul class="navbar-nav">
+                <li class="mx-5">
+                    <a href="{% url 'login' %}" class="btn btn-outline-dark">Log in</a>
+                </li>
+                <li class="mx-5">
+                    <a href="{% url 'register' %}" class="btn btn-outline-dark">Sign up</a>
+                </li>
+            </ul>
+        {% endif %}
+    </div>
+        
+    </div>
+
+</nav>
+
+{% block content %} 
+{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+
 </body>
 </html>
