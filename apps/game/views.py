@@ -123,7 +123,6 @@ def homePage(request):
             response.set_cookie('score', score, max_age=3600)
             return response
         elif incrementCookie:
-            response.delete_cookie('score')
             response.set_cookie('score', score)
             return response
         else:
