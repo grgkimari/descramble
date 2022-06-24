@@ -17,28 +17,34 @@ Guest
     <div>
         {% if message %}
             {% if message == 'Correct!' %}
-                <div class="container-lg align-center alert alert-success ">
-                    Message : {{message}}
+                <div class="container-lg align-center alert alert-success fw-bolder text-center">
+                    <h3>{{message}}</h3>
                 </div>
             {% else %}
-                <div class="container-lg align-center alert alert-danger ">
-                    Message : {{message}}
+                <div class="container-lg align-center alert alert-danger fw-bolder text-center">
+                    <h4>{{message}}</h4>
                 </div>
             {% endif %}
         {% endif %}
     </div>
 </section>
 <section>
-    <h1>{{word}}</h1>
+    <div class=" border-dark container-lg shadow-xlg bg-light m-5">
+        <h1 class="fw-bold, text-dark text-center">{{word}}</h1>
+    </div>
+    
 </section>
 
 <section>
-    <div>
+    <div class="container-lg border-dark text-dark bg-light my-5 align-center">
         <form method="POST" action="">
             {% csrf_token %}
-            <h1>{{scrambled_word}}</h1>
-            {{form.as_p}}
-            <button type="submit">Submit</button>
+            <h1 class="fw-bold, text-dark text-center my-2">{{scrambled_word}}</h1>
+            <div class="container-lg text-center border border-secondary border-2 align-center">
+                {{form.as_p}}
+            </div>
+            
+            <button type="submit" class="rounded-pill bg-info btn btn-lg border-success my-2 align-center">Submit</button>
             <p>Form errors</p>
             {% for field in form %}
                 {% for error in field.errors %}
@@ -49,17 +55,4 @@ Guest
     </div>
 </section>
 
-<section name = "errors">
-    <div>
-        <p>Errors : </p>
-        {% for error in form.non_field_errors %}
-            <strong>{{ error | escape }}</strong><br>
-        {% endfor %}
-        {% if messages %}
-        {% for message in messages %}
-            {{message}}<br>
-        {% endfor %}
-        {% endif %}
-    </div>
-</section>
 {% endblock %}
