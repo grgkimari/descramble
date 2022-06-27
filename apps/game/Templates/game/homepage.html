@@ -29,28 +29,22 @@ Guest
     </div>
 </section>
 <section>
-    <div class=" border-dark container-lg shadow-xlg bg-light m-5">
+    <div class=" border-dark container-lg shadow-xlg bg-light">
         <h1 class="fw-bold, text-dark text-center">{{word}}</h1>
     </div>
     
 </section>
 
 <section>
-    <div class="container-lg border-dark text-dark bg-light my-5 align-center">
+    <div class="container-lg border-dark text-dark bg-light my-5 align-center text-center">
         <form method="POST" action="">
             {% csrf_token %}
             <h1 class="fw-bold, text-dark text-center my-2">{{scrambled_word}}</h1>
             <div class="container-lg text-center border border-secondary border-2 align-center">
-                {{form.as_p}}
+                <input type="text" name="AttemptText" placeholder="Enter your attempt here" class="my-2 rounded border border-2 border-dark">
             </div>
             
             <button type="submit" class="rounded-pill bg-info btn btn-lg border-success my-2 align-center">Submit</button>
-            <p>Form errors</p>
-            {% for field in form %}
-                {% for error in field.errors %}
-                <strong>{{ error | escape }}</strong><br>
-                {% endfor %}
-            {% endfor %}
         </form>
     </div>
 </section>
