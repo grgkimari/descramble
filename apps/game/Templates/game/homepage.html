@@ -8,12 +8,14 @@ Guest
 {% endif %}
 {% endblock %}
 {% block content %}
-<section>
-    <div class="container-lg container-1 align-center text-center bg-dark my-5 rounded text-light text-lg fw-bolder">
+<section class="has-bg-img">
+    <img src="apps\game\Templates\game\pexels-pixmike-413195.jpg" alt="Grass image" class="bg-img">
+    <div class="container-lg container-1 align-center text-center  my-5 rounded text-light text-lg fw-bolder">
         <h2>Score :{% if request.user.is_authenticated %} {{request.user.currentScore}} {% else %} {{ score }} {% endif %}</h2>
     </div>
 </section>
 <section>
+    
     <div>
         {% if message %}
             {% if message == 'Correct!' %}
