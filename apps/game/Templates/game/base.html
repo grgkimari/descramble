@@ -25,29 +25,29 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-    <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
+    <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav" >
         {% if request.user.is_authenticated %}
             <ul class="navbar-nav">
                 <li class="mx-5">
-                    Logged in as : {{user.email}}
+                    Logged in as     :  {{user.email}}
                 </li>
                 <li class="mx-5">
-                    Level : {{user.level}}
+                    Level    :  {{user.level}}
                 </li>
                 <li class="mx-5 ">
-                    <a href="{% url 'edit_user' %}" class="btn btn-outline-dark">Account details</a>
+                    <a href="{% url 'edit_user' %}" class="btn btn-outline-dark my-1">Account details</a>
                 </li>
                 <li class="mx-5">
-                    <a href="{% url 'logout' %}" class="btn btn-outline-dark">Log out</a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-dark my-1">Log out</a>
                 </li>
             </ul>
         {% else %}
             <ul class="navbar-nav">
                 <li class="mx-5">
-                    <a href="{% url 'login' %}" class="btn btn-outline-dark">Log in</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-dark my-1">Log in</a>
                 </li>
                 <li class="mx-5">
-                    <a href="{% url 'register' %}" class="btn btn-outline-dark">Sign up</a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-dark my-1">Sign up</a>
                 </li>
             </ul>
         {% endif %}

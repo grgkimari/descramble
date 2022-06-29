@@ -9,8 +9,7 @@ Guest
 {% endblock %}
 {% block content %}
 <section>
-    <div class="has-bg-img container-lg container-1 align-center text-center  my-5 rounded text-dark text-lg fw-bolder">
-        <img src="static\game\images\pexels-pixmike-413195.jpg" alt="Grass image" class="bg-img">
+    <div class=" container-lg container-1 align-center text-center  my-5 rounded text-dark text-lg fw-bolder">
         <h2>Score :{% if request.user.is_authenticated %} {{request.user.currentScore}} {% else %} {{ score }} {% endif %}</h2>
     </div>
 </section>
