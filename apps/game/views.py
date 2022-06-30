@@ -61,12 +61,17 @@ def homePage(request):
         addCookie = False
         incrementCookie = False
         score = None
+        message = None
         #check if there is a previously stored cookie and assign score
         if 'score' in request.COOKIES:
             score = int(request.COOKIES.get('score'))
         else:
             score = 0
         form = AttemptForm(request.POST)
+        if request.user.is_authenticated:
+            word, scrambled_word, data = getWord(request.user.level)
+        else:
+             word, scrambled_word, data = getWord("Very Easy")
         if form.is_valid():
             
             previous_attempt = Attempt.objects.all()[0]
@@ -76,8 +81,7 @@ def homePage(request):
                 message = "Correct!"
                 if request.user.is_authenticated:
                     #score tracking for registered users
-                    #fix currentscore not resetting
-                    request.user.currentScore += 1
+                    request.user.currentScore += 5
                     request.user.save()
                     highscores = [highscore for highscore in HighScore.objects.filter(user = request.user).order_by('score')]
                     if len(highscores) > 0:
@@ -92,10 +96,37 @@ def homePage(request):
                 else:
                     #Score tracking for unregistered users
                     if 'score' in request.COOKIES:
-                        score += 1
+                        score += 5
                         incrementCookie = True
                     else:
                         score = 1
+                        addCookie = True
+            elif len(previous_attempt.word) == len(previous_attempt.attemptText) and list(previous_attempt.attemptText).sort() == list(previous_attempt.word).sort() and previous_attempt.attemptText in data.keys():
+                message = "An English word but not the word we were looking for."
+                if request.user.is_authenticated:
+                    #update user's currentScore and save
+                    request.user.currentScore += 3
+                    request.user.save()
+                    #get HighScores and update if score is a high score
+                    highscores = [highscore for highscore in HighScore.objects.filter(user = request.user).order_by('score')]
+                    if len(highscores) > 0:
+                        if request.user.currentScore > highscores[0].score or len(highscores) <= 10:
+                            newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
+                            newHighScore.save()
+                            if len(highscores) > 10:
+                                highscores[0].delete()
+                    # create highscore if none        
+                    else:
+                        newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
+                        newHighScore.save()
+                else:
+                    message = "Incorrect. Your attempt was " + previous_attempt.attemptText + ". The correct word is " + previous_attempt.word
+                     #Score tracking for unregistered users
+                    if 'score' in request.COOKIES:
+                        score += 3
+                        incrementCookie = True
+                    else:
+                        score = 3
                         addCookie = True
             else:
                 message = "Incorrect. Your attempt was " + previous_attempt.attemptText + ". The correct word is " + previous_attempt.word
@@ -107,10 +138,6 @@ def homePage(request):
         else:
             message = "Form is not valid"
 
-        if request.user.is_authenticated:
-            word, scrambled_word, data = getWord(request.user.level)
-        else:
-             word, scrambled_word, data = getWord("Very Easy")
         
         attempt = Attempt.objects.create(word=word, attemptText = "--NONE--")
         attempt.save()

@@ -15,11 +15,15 @@
     <input type="submit" name="submit" value="Submit">
 </form>
 {% if highscores %}
-    <div>
+    <div class="container-lg text-center text-dark border border-0 border-dark my-3">
+        <div class="row border border-1 border-dark">
+            <div class="col-6 border border-left-5 ">Time Set</div>
+            <div class="col-6  border border-left-5 border-left-success">Score</div>
+        </div>
         {% for highscore in highscores %}
-        <div>
-            <div>{{highscore.timeSet}}</div>
-            <div>{{ highscore.score}}</div>
+        <div class="row border border-1 border-dark">
+            <div class="col-6 border border-left-1 ">{{highscore.timeSet}}</div>
+            <div class="col-6 border border-left-1 ">{{ highscore.score}}</div>
         </div>
         {% endfor %}
     </div>

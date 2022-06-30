@@ -10,6 +10,7 @@ Guest
 {% block content %}
 <section>
     <div class=" container-lg container-1 align-center text-center  my-5 rounded text-dark text-lg fw-bolder">
+        
         <h2>Score :{% if request.user.is_authenticated %} {{request.user.currentScore}} {% else %} {{ score }} {% endif %}</h2>
     </div>
 </section>
@@ -32,6 +33,7 @@ Guest
 <section>
     <div class=" border-dark container-lg shadow-xlg bg-light">
         <h1 class="fw-bold, text-dark text-center">{{word}}</h1>
+        <h1 class="fw-bold, text-dark text-center my-2">{{scrambled_word}}</h1>
     </div>
     
 </section>
@@ -40,10 +42,7 @@ Guest
     <div class="container-lg border-dark text-dark bg-light my-5 align-center text-center">
         <form method="POST" action="">
             {% csrf_token %}
-            <h1 class="fw-bold, text-dark text-center my-2">{{scrambled_word}}</h1>
-            <div class="container-lg text-center border border-secondary border-2 align-center">
-                <input type="text" name="AttemptText" placeholder="Enter your attempt here" class="my-2 rounded border border-2 border-dark">
-            </div>
+            {{form.as_p}}
             
             <button type="submit" class="rounded-pill bg-info btn btn-lg border-success my-2 align-center">Submit</button>
         </form>

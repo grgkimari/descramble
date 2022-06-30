@@ -1,4 +1,6 @@
 from django.shortcuts import render,redirect
+
+from apps.game.models import HighScore
 from .forms import SignupForm,LoginForm
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
@@ -29,6 +31,8 @@ def login_view(request):
 			user = authenticate(username = username, password = password)
 			if user:
 				login(request, user)
+				user.currentScore = 0
+				user.save()
 				return redirect('homePage')
 			else:
 				msg = "Invalid Credentials."
@@ -45,10 +49,11 @@ def logout_view(request):
 
 @login_required(login_url = 'login')
 def edit_user(request):
+	highscores = HighScore.objects.filter(user = request.user)
 	if request.method == 'POST':
 		level = request.POST.get('level')
 		request.user.level = level
 		request.user.save()
 		return redirect('homePage')
 	else:
-		return render(request,'accounts/edit_user.html')
+		return render(request,'accounts/edit_user.html', {'highscores' : highscores})
