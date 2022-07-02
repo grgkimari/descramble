@@ -120,7 +120,7 @@ def homePage(request):
                         newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
                         newHighScore.save()
                 else:
-                    message = "Incorrect. Your attempt was " + previous_attempt.attemptText + ". The correct word is " + previous_attempt.word
+                    message = previous_attempt.attemptText + " is an English word but not the word we were looking for. The correct word is " + previous_attempt.word
                      #Score tracking for unregistered users
                     if 'score' in request.COOKIES:
                         score += 3

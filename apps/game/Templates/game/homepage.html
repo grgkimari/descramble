@@ -39,10 +39,10 @@ Guest
 </section>
 
 <section>
-    <div class="container-lg border-dark text-dark bg-light my-5 align-center text-center">
-        <form method="POST" action="">
+    <div class="container-lg border-dark text-dark bg-light my-5 align-center text-center" name = "attemptForm">
+        <form method="POST" action="" autofocus>
             {% csrf_token %}
-            {{form.as_p}}
+            <input type="text" class="container border border-2 border-dark rounded text-center" autofocus name="attemptText">
             
             <button type="submit" class="rounded-pill bg-info btn btn-lg border-success my-2 align-center">Submit</button>
         </form>
