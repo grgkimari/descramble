@@ -5,15 +5,11 @@ from .forms import AttemptForm
 from .models import Attempt
 import json
 import random
-import logging
 
-logging.basicConfig(filename='descramble_game.log', format='%(Pastime)s %(msg)s', filemode='w')
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 
 def getWord(level):
     word = None
-    with open('words.json') as allWordFile:
+    with open('static/game/words.json') as allWordFile:
         minWordLength = maxWordLength = 0
         if level == "Very Easy":
             minWordLength = 3

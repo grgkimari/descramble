@@ -1,11 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from apps.game.models import HighScore
-
 from .models import CustomUser
 
-admin.site.register(HighScore)
+
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
