@@ -21,12 +21,11 @@ def register_view(request):
 	return render(request,'accounts/register.html',{'form' : form, 'msg' : msg})
 
 def login_view(request):
-	form = LoginForm()
 	msg = None
 	if request.method == 'POST':
 		form = LoginForm(request.POST)
 		if form.is_valid():
-			username = form.cleaned_data.get('username')
+			username = form.cleaned_data.get('email')
 			password = form.cleaned_data.get('password')
 			user = authenticate(username = username, password = password)
 			if user:
@@ -41,7 +40,7 @@ def login_view(request):
 			msg = "Error validating form."
 	else:
 		msg = "Form not submitted"
-	return render(request,'accounts/login.html',{'form' : form, 'msg' : msg} )
+	return render(request,'accounts/login.html',{ 'msg' : msg} )
 
 def logout_view(request):
 	logout(request)
