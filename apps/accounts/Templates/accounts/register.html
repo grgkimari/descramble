@@ -1,10 +1,16 @@
 {% extends 'game/base.html' %}
 {% block title %} Sign up {% endblock %}
 {% block content %}
-<form action="" method="post">
-    {% csrf_token %}
-    {{form.as_p}}
-    <button type="submit">Submit</button>
-</form>
-{{msg}}
+<div class="container-lg border border-2 border-secondary background-light text-center my-5 text-dark">
+    <form action="" method="post">
+        {% csrf_token %}
+        <label for="email">Email</label>
+        <input type="email" autofocus class="form-control" name = "email">
+        <label for="email">Password</label>
+        <input type="password" autofocus class="form-control" name="password1">
+        <label for="email">Repeat password</label>
+        <input type="password" autofocus class="form-control" name="password2">
+        <button type="submit" class="btn btn-lg border border-1 border-success my-2 rounded-pill ">Submit</button>
+    </form>
+</div>
 {% endblock %}

@@ -1,32 +1,39 @@
 {% extends 'game/base.html' %}
 {% block title %} Edit User {% endblock %}
 {% block content %}
-<form action="", method="POST" name="edit_user">
-    {% csrf_token %}
-    <label for="email"  >Email</label>
-    <input readonly="True" value="{{request.user.email}}" type="email">
-    <label for="level">Level</label>
-    <input type="radio" name="level" value="Very Easy" {% if request.user.level == 'Very Easy' %} checked = "checked" {% endif %}>Very Easy</input>
-    <input type="radio" name="level" value="Easy" {% if request.user.level == 'Easy' %} checked = "checked" {% endif %} >Easy</input>
-    <input type="radio" name="level" value="Medium" {% if request.user.level == 'Medium' %} checked = "checked" {% endif %}>Medium</input>
-    <input type="radio" name="level" value="Hard" {% if request.user.level == 'Hard' %} checked = "checked" {% endif %}>Hard</input>
-    <input type="radio" name="level" value="Very Hard" {% if request.user.level == 'Very Hard' %} checked = "checked" {% endif %}>Very Hard</input>
-    <input type="radio" name="level" value="Legendary" {% if request.user.level == 'Legendary' %} checked = "checked" {% endif %}>Legendary</input>
-    <input type="submit" name="submit" value="Submit">
-</form>
+<div class="container-lg border border-2 border-secondary rounded text-center">
+    <form action="", method="POST" name="edit_user">
+        {% csrf_token %}
+        <label for="email"  >Email</label><br>
+        <input readonly="True" value="{{request.user.email}}" type="email"><br>
+        <label for="level">Level</label><br>
+        <input type="radio" name="level" value="Very Easy" {% if request.user.level == 'Very Easy' %} checked = "checked" {% endif %}>Very Easy</input>
+        <input type="radio" name="level" value="Easy" {% if request.user.level == 'Easy' %} checked = "checked" {% endif %} >Easy</input>
+        <input type="radio" name="level" value="Medium" {% if request.user.level == 'Medium' %} checked = "checked" {% endif %}>Medium</input>
+        <input type="radio" name="level" value="Hard" {% if request.user.level == 'Hard' %} checked = "checked" {% endif %}>Hard</input>
+        <input type="radio" name="level" value="Very Hard" {% if request.user.level == 'Very Hard' %} checked = "checked" {% endif %}>Very Hard</input>
+        <input type="radio" name="level" value="Legendary" {% if request.user.level == 'Legendary' %} checked = "checked" {% endif %}>Legendary</input>
+        <input type="submit" name="submit" value="Submit">
+    </form>
+</div>
+
 {% if highscores %}
-    <div class="container-lg text-center text-dark border border-0 border-dark my-3">
-        <div class="row border border-1 border-dark">
-            <div class="col-6 border border-left-5 ">Time Set</div>
-            <div class="col-6  border border-left-5 border-left-success">Score</div>
+    <div class="container-lg border border-2 border-secondary my-5 text-center">
+        <h1 class="text-secondary my-2">Highscores</h1>
+        <div class="container-lg text-center text-dark border border-0 border-dark my-3">
+            <div class="row border border-1 border-dark">
+                <div class="col-6 border border-left-5 ">Time Set</div>
+                <div class="col-6  border border-left-5 border-left-success">Score</div>
+            </div>
+            {% for highscore in highscores %}
+            <div class="row border border-1 border-dark">
+                <div class="col-6 border border-left-1 ">{{highscore.timeSet}}</div>
+                <div class="col-6 border border-left-1 ">{{ highscore.score}}</div>
+            </div>
+            {% endfor %}
         </div>
-        {% for highscore in highscores %}
-        <div class="row border border-1 border-dark">
-            <div class="col-6 border border-left-1 ">{{highscore.timeSet}}</div>
-            <div class="col-6 border border-left-1 ">{{ highscore.score}}</div>
-        </div>
-        {% endfor %}
     </div>
+    
     
 {% endif %}
 {% endblock %}
