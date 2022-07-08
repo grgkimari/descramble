@@ -1,3 +1,4 @@
+from urllib import response
 from .models import HighScore
 from django.shortcuts import render,redirect
 from django.contrib import messages
@@ -54,10 +55,20 @@ def getWord(level):
 
 def homePage(request):
     if request.method == 'POST':
+        lives = None
         addCookie = False
         incrementCookie = False
         score = None
         message = None
+        reduceLives = False
+        setLivesCookie = False
+        #check for the number of lives
+        if 'lives' in request.COOKIES:
+            lives = int(request.COOKIES.get('lives'))
+        else:
+            setLivesCookie = True
+            lives = 3
+
         #check if there is a previously stored cookie and assign score
         if 'score' in request.COOKIES:
             score = int(request.COOKIES.get('score'))
@@ -95,7 +106,7 @@ def homePage(request):
                         score += 5
                         incrementCookie = True
                     else:
-                        score = 1
+                        score = 5
                         addCookie = True
             elif len(previous_attempt.word) == len(previous_attempt.attemptText) and list(previous_attempt.attemptText).sort() == list(previous_attempt.word).sort() and previous_attempt.attemptText in data.keys():
                 message = "An English word but not the word we were looking for."
@@ -125,10 +136,15 @@ def homePage(request):
                         score = 3
                         addCookie = True
             else:
+                lives -= 1
                 message = "Incorrect. Your attempt was " + previous_attempt.attemptText + ". The correct word is " + previous_attempt.word
                 if 'score' not in request.COOKIES:
                     score = 0
                     addCookie = True
+                    
+                if lives not in request.COOKIES:
+                    reduceLives = True
+
             Attempt.objects.all().delete()
 
         else:
@@ -139,9 +155,13 @@ def homePage(request):
         attempt.save()
         form1 = AttemptForm()
         highscores = None
+        if lives <= 0:
+            return redirect('game_over')
         if request.user.is_authenticated:
             highscores = [highscore for highscore in HighScore.objects.filter(user = request.user)]
-        response = render(request, 'game/homepage.html', {'score' : score, 'highscores' : highscores, 'form' : form1, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
+        response = render(request, 'game/homepage.html', {'lives' : lives, 'score' : score, 'highscores' : highscores, 'form' : form1, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
+        if reduceLives:
+            response.set_cookie('lives', str(lives))
         if addCookie:
             response.set_cookie('score', score, max_age=3600)
             return response
@@ -153,6 +173,9 @@ def homePage(request):
     else:
         form = AttemptForm()
         message = "Welcome to descramble"
+        lives = None
+
+            
         if request.user.is_authenticated:
             word, scrambled_word, data = getWord(request.user.level)
             attempt = Attempt.objects.create(word=word, attemptText = "--NONE--")
@@ -161,4 +184,18 @@ def homePage(request):
             word, scrambled_word, data = getWord("Very Easy")
             attempt = Attempt.objects.create(word=word, attemptText = "--NONE--")
             attempt.save()
-        return render(request, 'game/homepage.html', {'form' : form, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
+
+        response = render(request, 'game/homepage.html', {'form' : form, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
+        setLivesCookie = False
+        #redirect to  game over page
+
+
+        response = render(request, 'game/homepage.html', {'lives' : lives, 'form' : form, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
+
+        if setLivesCookie:
+            response.set_cookie('lives', '3')
+        return response 
+
+def game_over(request):
+	response = render(request, 'game/game_over.html')
+	return response

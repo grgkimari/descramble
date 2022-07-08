@@ -1,3 +1,4 @@
+from urllib import response
 from django.shortcuts import render,redirect
 
 from apps.game.models import HighScore
@@ -9,11 +10,9 @@ def register_view(request):
 	form = SignupForm()
 	msg = None
 	if request.method == 'POST':
-		msg = 'Post request received'
 		form = SignupForm(request.POST)
 		if form.is_valid():
 			user = form.save()
-			msg = 'You have successfully registered.'
 			return redirect('homePage')
 		else:
 			msg = 'Error creating user'

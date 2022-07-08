@@ -10,7 +10,7 @@ Guest
 {% block content %}
 <section>
     <div class=" container-lg container-1 align-center text-center  my-5 rounded text-dark text-lg fw-bolder">
-        
+        <h2>Lives  : {{lives}}</h2>
         <h2>Score :{% if request.user.is_authenticated %} {{request.user.currentScore}} {% else %} {{ score }} {% endif %}</h2>
     </div>
 </section>
