@@ -21,3 +21,6 @@ class HighScore(models.Model):
 
     class Meta:
         ordering = ['score']
+    
+    def __str__(self) -> str:
+        return self.user.email + ' : ' + str(self.score) + ' : ' + str(self.timeSet)

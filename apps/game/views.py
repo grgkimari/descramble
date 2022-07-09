@@ -7,7 +7,7 @@ from .models import Attempt
 import json
 import random
 
-
+#get word from json file
 def getWord(level):
     word = None
     with open('static/game/words.json') as allWordFile:
@@ -57,10 +57,10 @@ def homePage(request):
     if request.method == 'POST':
         lives = None
         addCookie = False
-        incrementCookie = False
+        changeScoreCookie = False
         score = None
         message = None
-        reduceLives = False
+        changeLives = False
         setLivesCookie = False
         #check for the number of lives
         if 'lives' in request.COOKIES:
@@ -90,21 +90,11 @@ def homePage(request):
                     #score tracking for registered users
                     request.user.currentScore += 5
                     request.user.save()
-                    highscores = [highscore for highscore in HighScore.objects.filter(user = request.user).order_by('score')]
-                    if len(highscores) > 0:
-                        if request.user.currentScore > highscores[0].score or len(highscores) < 10:
-                            newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
-                            newHighScore.save()
-                            if len(highscores) == 10:
-                                highscores[0].delete()
-                    else:
-                        newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
-                        newHighScore.save()
                 else:
                     #Score tracking for unregistered users
                     if 'score' in request.COOKIES:
                         score += 5
-                        incrementCookie = True
+                        changeScoreCookie = True
                     else:
                         score = 5
                         addCookie = True
@@ -114,24 +104,13 @@ def homePage(request):
                     #update user's currentScore and save
                     request.user.currentScore += 3
                     request.user.save()
-                    #get HighScores and update if score is a high score
-                    highscores = [highscore for highscore in HighScore.objects.filter(user = request.user).order_by('score')]
-                    if len(highscores) > 0:
-                        if request.user.currentScore > highscores[0].score or len(highscores) <= 10:
-                            newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
-                            newHighScore.save()
-                            if len(highscores) > 10:
-                                highscores[0].delete()
-                    # create highscore if none        
-                    else:
-                        newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
-                        newHighScore.save()
+                    
                 else:
                     message = previous_attempt.attemptText + " is an English word but not the word we were looking for. The correct word is " + previous_attempt.word
                      #Score tracking for unregistered users
                     if 'score' in request.COOKIES:
                         score += 3
-                        incrementCookie = True
+                        changeScoreCookie = True
                     else:
                         score = 3
                         addCookie = True
@@ -143,7 +122,7 @@ def homePage(request):
                     addCookie = True
                     
                 if lives not in request.COOKIES:
-                    reduceLives = True
+                    changeLives = True
 
             Attempt.objects.all().delete()
 
@@ -155,22 +134,54 @@ def homePage(request):
         attempt.save()
         form1 = AttemptForm()
         highscores = None
+        isNewHighScore = False
         if lives <= 0:
-            return redirect('game_over')
+            #get HighScores and update if score is a high score
+            lives = 0
+            if request.user.is_authenticated:
+                highscores = [highscore for highscore in HighScore.objects.filter(user = request.user).order_by('-score')]
+                if len(highscores) > 0:
+                    if request.user.currentScore > highscores[0].score or len(highscores) < 10:
+                        isNewHighScore = True
+                        newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
+                        newHighScore.save()
+                        if len(highscores) == 10:
+                            highscores[0].delete()
+                
+                # create highscore if none        
+                else:
+                    newHighScore = HighScore.objects.create(score = request.user.currentScore, user = request.user)
+                    newHighScore.save()
+                request.user.currentScore = 0
+                request.user.save()
+            else:
+                lives = 3
+                achievedScore = score
+                score = 0
+                changeScoreCookie = True
+                changeLives = True
+
+            response = render(request, 'game/game_over.html', {'score' : achievedScore, 'isNewHighScore' : isNewHighScore})
+            if  changeLives:
+                response.set_cookie('lives', str(lives))
+            if changeScoreCookie:
+                response.set_cookie('score', score)
+            return response
         if request.user.is_authenticated:
             highscores = [highscore for highscore in HighScore.objects.filter(user = request.user)]
         response = render(request, 'game/homepage.html', {'lives' : lives, 'score' : score, 'highscores' : highscores, 'form' : form1, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
-        if reduceLives:
+        if changeLives:
             response.set_cookie('lives', str(lives))
         if addCookie:
             response.set_cookie('score', score, max_age=3600)
             return response
-        elif incrementCookie:
+        elif changeScoreCookie:
             response.set_cookie('score', score)
             return response
         else:
             return response
     else:
+        #if form is not submitted
         form = AttemptForm()
         message = "Welcome to descramble"
         lives = None
@@ -187,15 +198,15 @@ def homePage(request):
 
         response = render(request, 'game/homepage.html', {'form' : form, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
         setLivesCookie = False
-        #redirect to  game over page
 
+        if 'lives' in request.COOKIES:
+            lives = int(request.COOKIES.get('lives'))
+        else:
+            setLivesCookie = True
+            lives = 3
 
         response = render(request, 'game/homepage.html', {'lives' : lives, 'form' : form, 'word' : word, 'scrambled_word' : scrambled_word, 'message' : message})
 
         if setLivesCookie:
             response.set_cookie('lives', '3')
         return response 
-
-def game_over(request):
-	response = render(request, 'game/game_over.html')
-	return response

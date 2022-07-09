@@ -1,9 +1,9 @@
 {% extends 'game/base.html' %}
 {% block title %} Game Over {% endblock %}
 {% block content %}
-<div>
-    <h1>Game Over</h1>
-    <div> Score : {{score}} </div>
-
+<div class="container-lg bg-dark background-dark text-danger text-center fw-bolder my-5 border border-1 border-dark rounded">
+    <h1 class = " my-5 fw-bolder">Game Over</h1>
+    <div class="h1 my-5"> Score : {{score}} </div>
+    <a href="{% url 'homePage' %}" class="h1 fw-bold btn my-5 btn-lg border border-dark border-1 rounded-pill text-success bg-light">Play Again</a>
 </div>
 {% endblock %}
