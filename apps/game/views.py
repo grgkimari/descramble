@@ -1,3 +1,4 @@
+import re
 from urllib import response
 from .models import HighScore
 from django.shortcuts import render,redirect
@@ -88,31 +89,55 @@ def homePage(request):
                 message = "Correct!"
                 if request.user.is_authenticated:
                     #score tracking for registered users
-                    request.user.currentScore += 5
+                    level = request.user.level
+                    if level == "Very Easy":
+                        request.user.currentScore += 2
+                    elif level == "Easy":
+                        request.user.currentScore += 4
+                    elif level == "Medium":
+                        request.user.currentScore += 6
+                    elif level == "Hard":
+                        request.user.currentScore += 8
+                    elif level == "Very Hard":
+                        request.user.currentScore += 10
+                    elif level == "Legendary":
+                        request.user.currentScore += 25
                     request.user.save()
                 else:
                     #Score tracking for unregistered users
                     if 'score' in request.COOKIES:
-                        score += 5
+                        score += 2
                         changeScoreCookie = True
                     else:
-                        score = 5
+                        score = 2
                         addCookie = True
             elif len(previous_attempt.word) == len(previous_attempt.attemptText) and list(previous_attempt.attemptText).sort() == list(previous_attempt.word).sort() and previous_attempt.attemptText in data.keys():
                 message = '\'' + previous_attempt.attemptText + '\' ' + "is an English word but not the word we were looking for. The word was " + previous_attempt.word
                 if request.user.is_authenticated:
                     #update user's currentScore and save
-                    request.user.currentScore += 3
+                    level = request.user.level
+                    if level == "Very Easy":
+                        request.user.currentScore += 1
+                    elif level == "Easy":
+                        request.user.currentScore += 2
+                    elif level == "Medium":
+                        request.user.currentScore += 3
+                    elif level == "Hard":
+                        request.user.currentScore += 4
+                    elif level == "Very Hard":
+                        request.user.currentScore += 5
+                    elif level == "Legendary":
+                        request.user.currentScore += 12
                     request.user.save()
                     
                 else:
                     message = previous_attempt.attemptText + " is an English word but not the word we were looking for. The correct word is " + previous_attempt.word
                      #Score tracking for unregistered users
                     if 'score' in request.COOKIES:
-                        score += 3
+                        score += 1
                         changeScoreCookie = True
                     else:
-                        score = 3
+                        score = 1
                         addCookie = True
             else:
                 lives -= 1
