@@ -99,7 +99,7 @@ def homePage(request):
                         score = 5
                         addCookie = True
             elif len(previous_attempt.word) == len(previous_attempt.attemptText) and list(previous_attempt.attemptText).sort() == list(previous_attempt.word).sort() and previous_attempt.attemptText in data.keys():
-                message = "An English word but not the word we were looking for."
+                message = '\'' + previous_attempt.attemptText + '\' ' + "is an English word but not the word we were looking for. The word was " + previous_attempt.word
                 if request.user.is_authenticated:
                     #update user's currentScore and save
                     request.user.currentScore += 3
@@ -135,11 +135,14 @@ def homePage(request):
         form1 = AttemptForm()
         highscores = None
         isNewHighScore = False
+        achievedScore = None
+
         if lives <= 0:
+            lives = 3
             #get HighScores and update if score is a high score
-            lives = 0
             if request.user.is_authenticated:
-                highscores = [highscore for highscore in HighScore.objects.filter(user = request.user).order_by('-score')]
+                achievedScore = request.user.currentScore
+                highscores = [highscore for highscore in HighScore.objects.filter(user = request.user).order_by('score')]
                 if len(highscores) > 0:
                     if request.user.currentScore > highscores[0].score or len(highscores) < 10:
                         isNewHighScore = True
@@ -155,7 +158,7 @@ def homePage(request):
                 request.user.currentScore = 0
                 request.user.save()
             else:
-                lives = 3
+                
                 achievedScore = score
                 score = 0
                 changeScoreCookie = True

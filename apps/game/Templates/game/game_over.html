@@ -4,6 +4,14 @@
 <div class="container-lg bg-dark background-dark text-danger text-center fw-bolder my-5 border border-1 border-dark rounded">
     <h1 class = " my-5 fw-bolder">Game Over</h1>
     <div class="h1 my-5"> Score : {{score}} </div>
+    {% if isNewHighScore %}
+        <div class="container-lg h1 bg-light rounded my-5 border bord-1 border-secondary text-center fw-bolder">
+            <p>Congratulations!</p><p>You achieved a highScore!</p></div>
+    {% endif %}
+    <div>
+
+    </div>
+    <a href="{% url 'edit_user' %}" class = "h1 fw-bold btn my-5 btn-lg border border-dark border-1 rounded-pill text-success bg-light">View High Scores</a>
     <a href="{% url 'homePage' %}" class="h1 fw-bold btn my-5 btn-lg border border-dark border-1 rounded-pill text-success bg-light">Play Again</a>
 </div>
 {% endblock %}

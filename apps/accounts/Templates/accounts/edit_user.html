@@ -1,19 +1,19 @@
 {% extends 'game/base.html' %}
 {% block title %} Edit User {% endblock %}
 {% block content %}
-<div class="container-lg border border-2 border-secondary rounded text-center">
+<div class="container-lg border border-2 border-secondary rounded text-begin my-5 p-2">
     <form action="", method="POST" name="edit_user">
         {% csrf_token %}
-        <label for="email"  >Email</label><br>
-        <input readonly="True" value="{{request.user.email}}" type="email"><br>
+        <label for="email"  >Email</label>:
+        <input readonly="True" value="{{request.user.email}}" type="email"><br><br>
         <label for="level">Level</label><br>
-        <input type="radio" name="level" value="Very Easy" {% if request.user.level == 'Very Easy' %} checked = "checked" {% endif %}>Very Easy</input>
-        <input type="radio" name="level" value="Easy" {% if request.user.level == 'Easy' %} checked = "checked" {% endif %} >Easy</input>
-        <input type="radio" name="level" value="Medium" {% if request.user.level == 'Medium' %} checked = "checked" {% endif %}>Medium</input>
-        <input type="radio" name="level" value="Hard" {% if request.user.level == 'Hard' %} checked = "checked" {% endif %}>Hard</input>
-        <input type="radio" name="level" value="Very Hard" {% if request.user.level == 'Very Hard' %} checked = "checked" {% endif %}>Very Hard</input>
-        <input type="radio" name="level" value="Legendary" {% if request.user.level == 'Legendary' %} checked = "checked" {% endif %}>Legendary</input>
-        <input type="submit" name="submit" value="Submit">
+        <input type="radio" name="level" value="Very Easy" {% if request.user.level == 'Very Easy' %} checked = "checked" {% endif %}>Very Easy</input><br>
+        <input type="radio" name="level" value="Easy" {% if request.user.level == 'Easy' %} checked = "checked" {% endif %} >Easy</input><br>
+        <input type="radio" name="level" value="Medium" {% if request.user.level == 'Medium' %} checked = "checked" {% endif %}>Medium</input><br>
+        <input type="radio" name="level" value="Hard" {% if request.user.level == 'Hard' %} checked = "checked" {% endif %}>Hard</input><br>
+        <input type="radio" name="level" value="Very Hard" {% if request.user.level == 'Very Hard' %} checked = "checked" {% endif %}>Very Hard</input><br>
+        <input type="radio" name="level" value="Legendary" {% if request.user.level == 'Legendary' %} checked = "checked" {% endif %}>Legendary</input><br>
+        <input type="submit" class="h6 btn-lg text-center text-success border border-1 border-success my-2 rounded-pill bg-light p-2" name="submit" value="Apply Changes">
     </form>
 </div>
 
@@ -31,6 +31,7 @@
                 <div class="col-6 border border-left-1 ">{{ highscore.score}}</div>
             </div>
             {% endfor %}
+            <a href="{% url 'homePage' %}" class="btn border border-success rounded-pill bg-light text-center text-success h2 my-2">Back to Game</a>
         </div>
     </div>
     

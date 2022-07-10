@@ -9,9 +9,9 @@ Guest
 {% endblock %}
 {% block content %}
 <section>
-    <div class=" container-lg container-1 align-center text-center  my-5 rounded text-dark text-lg fw-bolder">
-        <h2>Lives  : {{lives}}</h2>
-        <h2>Score :{% if request.user.is_authenticated %} {{request.user.currentScore}} {% else %} {{ score }} {% endif %}</h2>
+    <div class=" container-lg container-1 align-center text-center row  my-5 rounded text-dark text-lg fw-bolder">
+        <h2 class="container col-4">Lives  : {{lives}}</h2>
+        <h2 class="container col-4">Score :{% if request.user.is_authenticated %} {{request.user.currentScore}} {% else %} {{ score }} {% endif %}</h2>
     </div>
 </section>
 <section>
