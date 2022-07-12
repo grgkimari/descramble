@@ -211,7 +211,7 @@ def homePage(request):
     else:
         #if form is not submitted
         form = AttemptForm()
-        message = "Welcome to descramble"
+        message = "Welcome to Descramble!"
         lives = None
 
             
